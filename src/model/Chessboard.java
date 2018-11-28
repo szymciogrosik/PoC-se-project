@@ -27,7 +27,7 @@ public class Chessboard {
                 this.chessboard[j][i] = new ChessboardElement(j, i, this.defaultRating);
     }
 
-    public void setQueen(int x, int y) throws Exception {
+    public void setQueenWithValid(int x, int y) throws Exception {
         if(x >= this.length || y >= this.width || x < 0 || y < 0)
             throw new Exception("Pole nie istnieje na szachownicy");
 
@@ -35,7 +35,6 @@ public class Chessboard {
             throw new Exception("Na polu (" + x + " " + y + ") znajduje się już hetman");
 
         //Ustaw hetmana
-//        this.chessboard[x][y].setQueen(true);
         this.chessboardQueensList.add(this.chessboard[x][y]);
         setQueenWithoutValid(x, y);
     }
@@ -135,5 +134,21 @@ public class Chessboard {
             }
             System.out.print(" ]\n");
         }
+    }
+
+    public ChessboardElement[][] getChessboard() {
+        return chessboard;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public LinkedList<ChessboardElement> getChessboardQueensList() {
+        return chessboardQueensList;
     }
 }

@@ -39,7 +39,7 @@ public class ChessboardElement {
 //        return isQueen;
 //    }
 //
-//    public void setQueen(boolean queen) {
+//    public void setQueenWithValid(boolean queen) {
 //        isQueen = queen;
 //    }
 }
