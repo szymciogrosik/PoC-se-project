@@ -11,9 +11,8 @@ import java.awt.image.BufferedImage;
 
 public class Gui {
     private final JPanel gui = new JPanel(new BorderLayout(5, 5));
-    private JButton[][] chessBoardSquares;
-    private JPanel chessBoard;
     private final int defaultBorderWidth = 500;
+    private JButton[][] chessBoardSquares;
     private int widthBorderElement;
     private int heightBorderElement;
     private int width;
@@ -43,7 +42,7 @@ public class Gui {
         tools.add(new JButton("Reset"));
         tools.addSeparator();
 
-        chessBoard = new JPanel(new GridLayout(width, height));
+        JPanel chessBoard = new JPanel(new GridLayout(width, height));
         chessBoard.setBorder(new LineBorder(Color.BLACK));
         gui.add(chessBoard);
 
@@ -105,7 +104,7 @@ public class Gui {
 
     private ImageIcon resizeIcon(ImageIcon imageIcon) {
         Image img = imageIcon.getImage();
-        Image newimg = img.getScaledInstance(this.widthBorderElement, this.heightBorderElement,  java.awt.Image.SCALE_SMOOTH);
-        return new ImageIcon(newimg);
+        Image newImg = img.getScaledInstance(this.widthBorderElement, this.heightBorderElement,  java.awt.Image.SCALE_SMOOTH);
+        return new ImageIcon(newImg);
     }
 }

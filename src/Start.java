@@ -9,7 +9,7 @@ public class Start {
     private static Chessboard chessboard;
     private static Gui gui;
 
-    public Start() {
+    private Start() {
         chessboard = new Chessboard(boardSideLength, boardSideLength);
         gui = new Gui(chessboard.getLength(), chessboard.getWidth());
         gui.setActualCheesboard(chessboard);
@@ -21,7 +21,11 @@ public class Start {
         f.setMinimumSize(f.getSize());
         f.setVisible(true);
 
-        Algorithm algorithm = new Algorithm(chessboard, gui);
+        try {
+            new Algorithm(chessboard, gui);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

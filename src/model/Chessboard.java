@@ -6,11 +6,10 @@ public class Chessboard {
 
     private int length;
     private int width;
-    private final double defaultRating = -1.0;
+    private final double defaultRating = 0.0;
 
     private ChessboardElement[][] chessboard;
     private LinkedList<ChessboardElement> chessboardQueensList = new LinkedList<>();
-    private LinkedList<LinkedList<ChessboardElement>> chessboardBadPath = new LinkedList<>();
 
     public Chessboard(int length, int width) {
         this.length = length;
@@ -94,7 +93,6 @@ public class Chessboard {
     }
 
     public void revertLastQueen() {
-        chessboardBadPath.add(this.chessboardQueensList);
         this.chessboardQueensList.removeLast();
         this.clearChessboard();
         for (ChessboardElement e: chessboardQueensList) {
@@ -118,7 +116,8 @@ public class Chessboard {
         for (int i = 0; i < this.width; i++) {
             System.out.print("[");
             for (int j = 0; j < this.length; j++)
-                System.out.print("("+chessboard[j][i].getX()+","+chessboard[j][i].getY()+",|"+chessboard[j][i].getRating()+"|)");
+                System.out.print(chessboard[j][i].getRating()+" ");
+//                System.out.print("("+chessboard[j][i].getX()+","+chessboard[j][i].getY()+",|"+chessboard[j][i].getRating()+"|)");
             System.out.print("]\n");
         }
     }
