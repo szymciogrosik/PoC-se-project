@@ -13,6 +13,10 @@ public class ChessboardElement {
         this.rating = rating;
     }
 
+    public boolean isTheSameXY(int x, int y) {
+        return this.getX() == x && this.getY() == y;
+    }
+
     public double getRating() {
         return rating;
     }
