@@ -26,7 +26,7 @@ public class Gui {
 
         this.widthBorderElement = this.heightBorderElement = this.defaultBorderWidth/this.width;
         this.defaultIcon = new ImageIcon(new BufferedImage(this.widthBorderElement, this.heightBorderElement, BufferedImage.TYPE_INT_ARGB));
-        this.queenIcon = new ImageIcon("C:\\Users\\Szymon\\_PROJEKTY\\SE_PROJEKT\\src\\resources\\queen.png");
+        this.queenIcon = new ImageIcon("C:\\Users\\szymc\\Desktop\\projekty\\se_projekt\\src\\resources\\queen.png");
         this.queenIcon = this.resizeIcon(this.queenIcon);
 
         initializeGui(width, height);
