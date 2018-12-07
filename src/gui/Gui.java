@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
 
 public class Gui {
     private final JPanel gui = new JPanel(new BorderLayout(5, 5));
@@ -73,7 +74,7 @@ public class Gui {
         return gui;
     }
 
-    public void setActualCheesboard(Chessboard cheesboard) {
+    public void setActualCheesboard(LinkedList<ChessboardElement> openList, Chessboard cheesboard) {
         clearBoard();
         for (int ii = 0; ii < height; ii++) {
             for (int jj = 0; jj < width; jj++) {
@@ -83,7 +84,7 @@ public class Gui {
             }
         }
 
-        for (ChessboardElement e : cheesboard.getChessboardQueensList()) {
+        for (ChessboardElement e : openList) {
             chessBoardSquares[e.getX()][e.getY()].setBackground(Color.RED);
             chessBoardSquares[e.getX()][e.getY()].setIcon(this.queenIcon);
         }

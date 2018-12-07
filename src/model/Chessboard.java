@@ -9,7 +9,7 @@ public class Chessboard {
     private final double defaultRating = 0.0;
 
     private ChessboardElement[][] chessboard;
-    private LinkedList<ChessboardElement> chessboardQueensList = new LinkedList<>();
+//    private LinkedList<ChessboardElement> chessboardQueensList = new LinkedList<>();
 
     public Chessboard(int length, int width) {
         this.length = length;
@@ -26,19 +26,7 @@ public class Chessboard {
                 this.chessboard[j][i] = new ChessboardElement(j, i, this.defaultRating);
     }
 
-    public void setQueenWithValid(int x, int y) throws Exception {
-        if(x >= this.length || y >= this.width || x < 0 || y < 0)
-            throw new Exception("Pole nie istnieje na szachownicy");
-
-        if(isQueenOnThisField(x, y))
-            throw new Exception("Na polu (" + x + " " + y + ") znajduje się już hetman");
-
-        //Ustaw hetmana
-        this.chessboardQueensList.add(this.chessboard[x][y]);
-        setQueenWithoutValid(x, y);
-    }
-
-    private void setQueenWithoutValid(int x, int y) {
+    public void setQueenWithoutValid(int x, int y) {
         //Ustaw na liniach poziomych
         for (int j = 0; j < this.length; j++)
             this.chessboard[j][y].setFree(false);
@@ -81,9 +69,9 @@ public class Chessboard {
         }
     }
 
-    private boolean isQueenOnThisField(int x, int y) {
+    public boolean isQueenOnThisField(LinkedList<ChessboardElement> openList, int x, int y) {
         boolean isQueen = false;
-        for (ChessboardElement e : this.chessboardQueensList) {
+        for (ChessboardElement e : openList) {
             if(e.getX() == x && e.getY() == y) {
                 isQueen = true;
                 break;
@@ -92,10 +80,9 @@ public class Chessboard {
         return isQueen;
     }
 
-    public void revertLastQueen() {
-        this.chessboardQueensList.removeLast();
+    public void revertLastQueenOnChessboard(LinkedList<ChessboardElement> openList) {
         this.clearChessboard();
-        for (ChessboardElement e: chessboardQueensList) {
+        for (ChessboardElement e: openList) {
             try {
                 this.setQueenWithoutValid(e.getX(), e.getY());
             } catch (Exception e1) {
@@ -144,9 +131,5 @@ public class Chessboard {
 
     public int getWidth() {
         return width;
-    }
-
-    public LinkedList<ChessboardElement> getChessboardQueensList() {
-        return chessboardQueensList;
     }
 }

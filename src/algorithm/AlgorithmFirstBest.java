@@ -4,6 +4,7 @@ import gui.Gui;
 import model.Chessboard;
 import model.ChessboardElement;
 
+import javax.swing.*;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -11,7 +12,7 @@ import java.util.Set;
 public class AlgorithmFirstBest {
 
     private Set<ChessboardElement> closedList = new HashSet<>();
-    private Set<ChessboardElement> openList = new HashSet<>();
+    private LinkedList<ChessboardElement> openList = new LinkedList<>();
 
     private Chessboard chessboard;
     private Gui gui;
@@ -25,12 +26,14 @@ public class AlgorithmFirstBest {
 
     private void runAlgorithm() throws Exception {
         int i = this.chessboard.getLength()-1;
+        int numberOfCalculateHeuristic = 0;
 
-        while(this.chessboard.getChessboardQueensList().size() < this.chessboard.getLength()) {
+        while(openList.size() < this.chessboard.getLength()) {
             for (int j = 0; j < this.chessboard.getLength(); j++) {
                 if(this.chessboard.getChessboard()[j][i].isFree()) {
                     //Todo: Tutaj liczymy liczbę wywołań funkcji
                     calculateHeuristicForBoardElement(j, i);
+                    numberOfCalculateHeuristic++;
                 }
             }
 
@@ -43,10 +46,14 @@ public class AlgorithmFirstBest {
             updateGui();
 
             if(this.openList.size() == 0) {
-                System.out.println("Brak rozwiazania");
+                JOptionPane.showMessageDialog(null, "Nie znaleziono rozwiązania.");
                 break;
             }
         }
+
+        updateGui();
+
+        JOptionPane.showMessageDialog(null, "Heurystykę liczono: " + numberOfCalculateHeuristic + " razy.");
     }
 
     private void calculateHeuristicForBoardElement(int x, int y) throws Exception {
@@ -56,7 +63,7 @@ public class AlgorithmFirstBest {
         int numberOfLevels = 2;
         int rating = 0;
 
-        this.chessboard.setQueenWithValid(x, y);
+        setQueenWithValid(x, y);
 
 //        for (int i = this.chessboard.getWidth()-1; i >= 0; i--) {
             for (int j = 0; j < this.chessboard.getLength(); j++) {
@@ -67,7 +74,7 @@ public class AlgorithmFirstBest {
 //        }
 
         this.chessboard.getChessboard()[x][y].setRating(rating);
-        this.chessboard.revertLastQueen();
+        revertLastQueen();
     }
 
     private boolean chooseBest(int startY) throws Exception {
@@ -87,27 +94,25 @@ public class AlgorithmFirstBest {
                 bestRating = this.chessboard.getChessboard()[j][i].getRating();
             }
         }
-        System.out.println("Best: " + bestX + ", " + bestY + ", " + bestRating);
+//        System.out.println("Best: " + bestX + ", " + bestY + ", " + bestRating);
 
         if(bestRating != -1) {
-            this.chessboard.setQueenWithValid(bestX, bestY);
-            this.removeCloseCheesboardElements(this.chessboard.getChessboardQueensList().getLast(), 1);
-            this.openList.add(this.chessboard.getChessboardQueensList().getLast());
+            setQueenWithValid(bestX, bestY);
+            this.removeCloseChessboardElements(openList.getLast(), 1);
             return true;
         } else {
-            this.openList.remove(this.chessboard.getChessboardQueensList().getLast());
-            addToCloseSetElement(this.chessboard.getChessboardQueensList().getLast());
-            this.chessboard.revertLastQueen();
+            addToCloseSetElement(openList.getLast());
+            revertLastQueen();
             return false;
         }
     }
 
     private void addToCloseSetElement(ChessboardElement element) {
-        this.removeCloseCheesboardElements(element, 2);
+        this.removeCloseChessboardElements(element, 2);
         this.closedList.add(element);
     }
 
-    private void removeCloseCheesboardElements(ChessboardElement elementToAdd, int stage) {
+    private void removeCloseChessboardElements(ChessboardElement elementToAdd, int stage) {
         Set<ChessboardElement> setToRemove = new HashSet<>();
 
         for (ChessboardElement e : this.closedList) {
@@ -128,12 +133,29 @@ public class AlgorithmFirstBest {
         return false;
     }
 
+    private void revertLastQueen() {
+        openList.removeLast();
+        this.chessboard.revertLastQueenOnChessboard(openList);
+    }
+
+    private void setQueenWithValid(int x, int y) throws Exception {
+        if(x >= this.chessboard.getLength() || y >= this.chessboard.getWidth() || x < 0 || y < 0)
+            throw new Exception("Pole nie istnieje na szachownicy");
+
+        if(this.chessboard.isQueenOnThisField(openList, x, y))
+            throw new Exception("Na polu (" + x + " " + y + ") znajduje się już hetman");
+
+        //Ustaw hetmana
+        openList.add(this.chessboard.getChessboard()[x][y]);
+        this.chessboard.setQueenWithoutValid(x, y);
+    }
+
     private void updateGui() {
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        gui.setActualCheesboard(chessboard);
+//        try {
+//            Thread.sleep(200);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        gui.setActualCheesboard(openList, chessboard);
     }
 }
