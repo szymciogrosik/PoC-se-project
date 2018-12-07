@@ -1,3 +1,4 @@
+import algorithm.AlgorithmFirstBest;
 import gui.Gui;
 import algorithm.Algorithm;
 import model.Chessboard;
@@ -22,7 +23,8 @@ public class Start {
         f.setVisible(true);
 
         try {
-            new Algorithm(chessboard, gui);
+//            new Algorithm(chessboard, gui);
+            new AlgorithmFirstBest(chessboard, gui);
         } catch (Exception e) {
             e.printStackTrace();
         }

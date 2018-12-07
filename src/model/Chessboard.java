@@ -117,7 +117,6 @@ public class Chessboard {
             System.out.print("[");
             for (int j = 0; j < this.length; j++)
                 System.out.print(chessboard[j][i].getRating()+" ");
-//                System.out.print("("+chessboard[j][i].getX()+","+chessboard[j][i].getY()+",|"+chessboard[j][i].getRating()+"|)");
             System.out.print("]\n");
         }
     }
