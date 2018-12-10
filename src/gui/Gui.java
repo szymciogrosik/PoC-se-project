@@ -27,32 +27,35 @@ public class Gui {
 
         this.widthBorderElement = this.heightBorderElement = this.defaultBorderWidth/this.width;
         this.defaultIcon = new ImageIcon(new BufferedImage(this.widthBorderElement, this.heightBorderElement, BufferedImage.TYPE_INT_ARGB));
-        this.queenIcon = new ImageIcon("C:\\Users\\Szymon\\_PROJEKTY\\SE_PROJEKT\\src\\resources\\queen.png");
+        this.queenIcon = new ImageIcon(getClass().getResource("/resources/queen.png"));
         this.queenIcon = this.resizeIcon(this.queenIcon);
 
         initializeGui(width, height);
     }
 
     private void initializeGui(int width, int height) {
-        chessBoardSquares = new JButton[width][height];
+        chessBoardSquares = new JButton[width+1][height+1];
         gui.setBorder(new EmptyBorder(5, 5, 5, 5));
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         gui.add(tools, BorderLayout.PAGE_START);
-        tools.add(new JButton("Start"));
-        tools.add(new JButton("Reset"));
         tools.addSeparator();
 
-        JPanel chessBoard = new JPanel(new GridLayout(width, height));
+        JPanel chessBoard = new JPanel(new GridLayout(width+1, height+1));
         chessBoard.setBorder(new LineBorder(Color.BLACK));
         gui.add(chessBoard);
 
         Insets buttonMargin = new Insets(0,0,0,0);
-        for (int ii = 0; ii < height; ii++) {
-            for (int jj = 0; jj < width; jj++) {
+        for (int ii = 0; ii < height+1; ii++) {
+            for (int jj = 0; jj < width+1; jj++) {
                 JButton b = new JButton();
-                b.setMargin(buttonMargin);
-                b.setIcon(defaultIcon);
+                b.setSize(widthBorderElement, heightBorderElement);
+
+                if(ii != height && jj != width) {
+                    b.setMargin(buttonMargin);
+                    b.setIcon(defaultIcon);
+                }
+
                 if ((jj % 2 == 1 && ii % 2 == 1) || (jj % 2 == 0 && ii % 2 == 0)) {
                     b.setBackground(Color.WHITE);
                 } else {
@@ -63,8 +66,18 @@ public class Gui {
             }
         }
 
-        for (int ii = 0; ii < height; ii++) {
-            for (int jj = 0; jj < width; jj++) {
+        if(this.width <= 15) {
+            for (int i = 0; i < width; i++) {
+                chessBoardSquares[height][i].setText(width - i + "");
+            }
+
+            for (int i = 0; i < width; i++) {
+                chessBoardSquares[i][height].setText((char)(i+65) + "");
+            }
+        }
+
+        for (int ii = 0; ii < height+1; ii++) {
+            for (int jj = 0; jj < width+1; jj++) {
                 chessBoard.add(chessBoardSquares[jj][ii]);
             }
         }

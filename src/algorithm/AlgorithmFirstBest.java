@@ -12,14 +12,17 @@ import java.util.Set;
 public class AlgorithmFirstBest {
 
     private Set<ChessboardElement> closedList = new HashSet<>();
-    private LinkedList<ChessboardElement> openList = new LinkedList<>();
+    private HashSet<ChessboardElement> openList = new HashSet<>();
+    private LinkedList<ChessboardElement> finalPath = new LinkedList<>();
 
     private Chessboard chessboard;
     private Gui gui;
+    private int delay;
 
-    public AlgorithmFirstBest(Chessboard chessboard, Gui gui) throws Exception {
+    public AlgorithmFirstBest(Chessboard chessboard, Gui gui, int delay) throws Exception {
         this.chessboard = chessboard;
         this.gui = gui;
+        this.delay = delay;
 
         runAlgorithm();
     }
@@ -28,32 +31,35 @@ public class AlgorithmFirstBest {
         int i = this.chessboard.getLength()-1;
         int numberOfCalculateHeuristic = 0;
 
-        while(openList.size() < this.chessboard.getLength()) {
+        while(finalPath.size() < this.chessboard.getLength()) {
+
             for (int j = 0; j < this.chessboard.getLength(); j++) {
                 if(this.chessboard.getChessboard()[j][i].isFree()) {
-                    //Todo: Tutaj liczymy liczbę wywołań funkcji
                     calculateHeuristicForBoardElement(j, i);
-                    numberOfCalculateHeuristic++;
+                    openList.add(this.chessboard.getChessboard()[j][i]);
                 }
             }
 
-            if(chooseBest(i)){
-                i--;
+            if(chooseBest(i)) {
+                numberOfCalculateHeuristic++;
+                if (finalPath.size() > 0 && finalPath.getLast().getY() - 1 >= 0)
+                    i = finalPath.getLast().getY() - 1;
             } else {
-                i++;
+                if (finalPath.size() > 0 && finalPath.getLast().getY() + 1 <= this.chessboard.getWidth() - 1)
+                    i = finalPath.getLast().getY() + 1;
             }
 
             updateGui();
 
             if(this.openList.size() == 0) {
-                JOptionPane.showMessageDialog(null, "Nie znaleziono rozwiązania.");
+                JOptionPane.showMessageDialog(null, "Nie znaleziono rozwiązania.", "Błąd", 0);
                 break;
             }
         }
 
         updateGui();
 
-        JOptionPane.showMessageDialog(null, "Heurystykę liczono: " + numberOfCalculateHeuristic + " razy.");
+        JOptionPane.showMessageDialog(null, "Rozwinięto " + numberOfCalculateHeuristic + " wierzchołków.", "Znaleziono rozwiązanie", 1);
     }
 
     private void calculateHeuristicForBoardElement(int x, int y) throws Exception {
@@ -62,18 +68,19 @@ public class AlgorithmFirstBest {
         //numberOfLevels +1 zawsze
         int numberOfLevels = 2;
         int rating = 0;
+        int levelBonus = this.chessboard.getWidth()*(this.chessboard.getWidth()-y);
 
         setQueenWithValid(x, y);
 
-//        for (int i = this.chessboard.getWidth()-1; i >= 0; i--) {
+        for (int i = y-1; i >= 0 && i >= i-numberOfLevels; i--) {
             for (int j = 0; j < this.chessboard.getLength(); j++) {
-                if(y-1 >= 0 && this.chessboard.getChessboard()[j][y-1].isFree()){
+                if(this.chessboard.getChessboard()[j][i].isFree()){
                     rating++;
                 }
             }
-//        }
+        }
 
-        this.chessboard.getChessboard()[x][y].setRating(rating);
+        this.chessboard.getChessboard()[x][y].setRating(rating + levelBonus);
         revertLastQueen();
     }
 
@@ -83,25 +90,25 @@ public class AlgorithmFirstBest {
         double bestRating = -1;
 
         int i = startY;
-        for (int j = 0; j < this.chessboard.getLength(); j++) {
+
+        for (ChessboardElement e: this.openList) {
             if(
-                    this.chessboard.getChessboard()[j][i].isFree()
-                            && this.chessboard.getChessboard()[j][i].getRating() > bestRating
-                            && !isClosed(j, i)
+                    e.isFree()
+                    && e.getRating() > bestRating
+                    && !isClosed(e.getX(), e.getY())
             ){
-                bestX = this.chessboard.getChessboard()[j][i].getX();
-                bestY = this.chessboard.getChessboard()[j][i].getY();
-                bestRating = this.chessboard.getChessboard()[j][i].getRating();
+                bestX = e.getX();
+                bestY = e.getY();
+                bestRating = e.getRating();
             }
         }
-//        System.out.println("Best: " + bestX + ", " + bestY + ", " + bestRating);
 
         if(bestRating != -1) {
             setQueenWithValid(bestX, bestY);
-            this.removeCloseChessboardElements(openList.getLast(), 1);
+            addToCloseSetElement(finalPath.getLast());
+            this.removeCloseChessboardElements(finalPath.getLast(), 1);
             return true;
         } else {
-            addToCloseSetElement(openList.getLast());
             revertLastQueen();
             return false;
         }
@@ -110,6 +117,7 @@ public class AlgorithmFirstBest {
     private void addToCloseSetElement(ChessboardElement element) {
         this.removeCloseChessboardElements(element, 2);
         this.closedList.add(element);
+        this.openList.remove(element);
     }
 
     private void removeCloseChessboardElements(ChessboardElement elementToAdd, int stage) {
@@ -134,28 +142,30 @@ public class AlgorithmFirstBest {
     }
 
     private void revertLastQueen() {
-        openList.removeLast();
-        this.chessboard.revertLastQueenOnChessboard(openList);
+        finalPath.removeLast();
+        this.chessboard.revertLastQueenOnChessboard(finalPath);
     }
 
     private void setQueenWithValid(int x, int y) throws Exception {
         if(x >= this.chessboard.getLength() || y >= this.chessboard.getWidth() || x < 0 || y < 0)
             throw new Exception("Pole nie istnieje na szachownicy");
 
-        if(this.chessboard.isQueenOnThisField(openList, x, y))
+        if(this.chessboard.isQueenOnThisField(finalPath, x, y))
             throw new Exception("Na polu (" + x + " " + y + ") znajduje się już hetman");
 
         //Ustaw hetmana
-        openList.add(this.chessboard.getChessboard()[x][y]);
+        finalPath.add(this.chessboard.getChessboard()[x][y]);
         this.chessboard.setQueenWithoutValid(x, y);
     }
 
     private void updateGui() {
-//        try {
-//            Thread.sleep(200);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-        gui.setActualCheesboard(openList, chessboard);
+        if(delay != 0) {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        gui.setActualCheesboard(finalPath, chessboard);
     }
 }

@@ -5,23 +5,28 @@ import model.Chessboard;
 import javax.swing.*;
 
 public class Start {
-    private final static int boardSideLength = 20;
+    public static int boardSideLength;
+    public static int delay;
     private static Chessboard chessboard;
     private static Gui gui;
 
     private Start() {
+        boardSideLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Podaj długość krawędzi planszy"));
+        delay = Integer.parseInt(JOptionPane.showInputDialog(null, "Podaj opóźnienie (milisekundy)"));
+
         chessboard = new Chessboard(boardSideLength, boardSideLength);
         gui = new Gui(chessboard.getLength(), chessboard.getWidth());
         JFrame f = new JFrame("Projekt systemy eksperckie");
         f.add(gui.getGui());
-        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setLocationByPlatform(true);
         f.pack();
         f.setMinimumSize(f.getSize());
         f.setVisible(true);
+        f.setLocationRelativeTo(null);
 
         try {
-            new AlgorithmFirstBest(chessboard, gui);
+            new AlgorithmFirstBest(chessboard, gui, delay);
         } catch (Exception e) {
             e.printStackTrace();
         }
