@@ -21,9 +21,9 @@ public class Start {
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setLocationByPlatform(true);
         f.pack();
-        f.setMinimumSize(f.getSize());
         f.setVisible(true);
         f.setLocationRelativeTo(null);
+        f.setSize(800, 800);
 
         try {
             new AlgorithmFirstBest(chessboard, gui, delay);

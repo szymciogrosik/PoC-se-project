@@ -9,7 +9,6 @@ public class Chessboard {
     private final double defaultRating = 0.0;
 
     private ChessboardElement[][] chessboard;
-//    private LinkedList<ChessboardElement> chessboardQueensList = new LinkedList<>();
 
     public Chessboard(int length, int width) {
         this.length = length;
@@ -91,7 +90,7 @@ public class Chessboard {
         }
     }
 
-    public void clearChessboard() {
+    private void clearChessboard() {
         for (int i = 0; i < this.width; i++) {
             for (int j = 0; j < this.length; j++) {
                 this.chessboard[j][i].setFree(true);

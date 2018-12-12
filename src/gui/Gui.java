@@ -18,17 +18,19 @@ public class Gui {
     private int heightBorderElement;
     private int width;
     private int height;
-    private ImageIcon queenIcon;
+//    private ImageIcon queenIcon;
     private ImageIcon defaultIcon;
 
     public Gui(int width, int height) {
         this.width = width;
         this.height = height;
 
-        this.widthBorderElement = this.heightBorderElement = this.defaultBorderWidth/this.width;
+//        this.widthBorderElement = this.heightBorderElement = this.defaultBorderWidth/this.width;
+        this.widthBorderElement = this.defaultBorderWidth/this.width;
+        this.heightBorderElement = this.defaultBorderWidth/this.height;
         this.defaultIcon = new ImageIcon(new BufferedImage(this.widthBorderElement, this.heightBorderElement, BufferedImage.TYPE_INT_ARGB));
-        this.queenIcon = new ImageIcon(getClass().getResource("/resources/queen.png"));
-        this.queenIcon = this.resizeIcon(this.queenIcon);
+//        this.queenIcon = new ImageIcon(getClass().getResource("/resources/queen.png"));
+//        this.queenIcon = this.resizeIcon(this.queenIcon);
 
         initializeGui(width, height);
     }
@@ -66,14 +68,12 @@ public class Gui {
             }
         }
 
-        if(this.width <= 15) {
-            for (int i = 0; i < width; i++) {
-                chessBoardSquares[height][i].setText(width - i + "");
-            }
+        for (int i = 0; i < width; i++) {
+            chessBoardSquares[height][i].setText(width - i + "");
+        }
 
-            for (int i = 0; i < width; i++) {
-                chessBoardSquares[i][height].setText((char)(i+65) + "");
-            }
+        for (int i = 0; i < width; i++) {
+            chessBoardSquares[i][height].setText((char)(i+65) + "");
         }
 
         for (int ii = 0; ii < height+1; ii++) {
@@ -99,7 +99,7 @@ public class Gui {
 
         for (ChessboardElement e : openList) {
             chessBoardSquares[e.getX()][e.getY()].setBackground(Color.RED);
-            chessBoardSquares[e.getX()][e.getY()].setIcon(this.queenIcon);
+//            chessBoardSquares[e.getX()][e.getY()].setIcon(this.queenIcon);
         }
     }
 

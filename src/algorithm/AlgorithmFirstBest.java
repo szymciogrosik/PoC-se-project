@@ -12,7 +12,7 @@ import java.util.Set;
 public class AlgorithmFirstBest {
 
     private Set<ChessboardElement> closedList = new HashSet<>();
-    private HashSet<ChessboardElement> openList = new HashSet<>();
+    private LinkedList<ChessboardElement> openList = new LinkedList<>();
     private LinkedList<ChessboardElement> finalPath = new LinkedList<>();
 
     private Chessboard chessboard;
@@ -36,7 +36,7 @@ public class AlgorithmFirstBest {
             for (int j = 0; j < this.chessboard.getLength(); j++) {
                 if(this.chessboard.getChessboard()[j][i].isFree()) {
                     calculateHeuristicForBoardElement(j, i);
-                    openList.add(this.chessboard.getChessboard()[j][i]);
+                    addToOpenList(this.chessboard.getChessboard()[j][i]);
                 }
             }
 
@@ -167,5 +167,19 @@ public class AlgorithmFirstBest {
             }
         }
         gui.setActualCheesboard(finalPath, chessboard);
+    }
+
+    private void addToOpenList(ChessboardElement e) {
+        boolean exists = false;
+
+        for (ChessboardElement elem : openList) {
+            if(e.getX() == elem.getX() && e.getY() == elem.getY()) {
+                exists = true;
+                break;
+            }
+        }
+
+        if(!exists)
+            openList.add(e);
     }
 }
