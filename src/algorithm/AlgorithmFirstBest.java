@@ -29,19 +29,21 @@ public class AlgorithmFirstBest {
 
     private void runAlgorithm() throws Exception {
         int i = this.chessboard.getLength()-1;
+        int numberOfCalculateOpenNodes = 0;
         int numberOfCalculateHeuristic = 0;
 
         while(finalPath.size() < this.chessboard.getLength()) {
 
             for (int j = 0; j < this.chessboard.getLength(); j++) {
                 if(this.chessboard.getChessboard()[j][i].isFree()) {
+                    numberOfCalculateHeuristic++;
                     calculateHeuristicForBoardElement(j, i);
                     addToOpenList(this.chessboard.getChessboard()[j][i]);
                 }
             }
 
             if(chooseBest(i)) {
-                numberOfCalculateHeuristic++;
+                numberOfCalculateOpenNodes++;
                 if (finalPath.size() > 0 && finalPath.getLast().getY() - 1 >= 0)
                     i = finalPath.getLast().getY() - 1;
             } else {
@@ -59,7 +61,8 @@ public class AlgorithmFirstBest {
 
         updateGui();
 
-        JOptionPane.showMessageDialog(null, "Rozwinięto " + numberOfCalculateHeuristic + " wierzchołków.", "Znaleziono rozwiązanie", 1);
+        JOptionPane.showMessageDialog(null, "Rozwinięto " + numberOfCalculateOpenNodes + " wierzchołków." +
+                "\nFunkcję heurystykę obliczono: "+ numberOfCalculateHeuristic, "Znaleziono rozwiązanie", 1);
     }
 
     private void calculateHeuristicForBoardElement(int x, int y) throws Exception {
